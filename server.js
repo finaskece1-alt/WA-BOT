@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
                 body { background: #050505; color: #fff; font-family: 'Arial', sans-serif; text-align: center; padding: 20px; }
                 .card { border: 2px solid #bc13fe; background: #000; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px #bc13fe; max-width: 400px; margin: auto; }
                 
-                /* FOTO DARI LINK IBB LU */
+                /* LINK FOTO FIX */
                 .banner { 
                     width: 100%; 
                     border-radius: 15px; 
@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="card">
-                <img src="https://i.ibb.co.com/WpyXNbPY/image.png" class="banner" onerror="this.src='https://i.ibb.co/LhY0mC4/finas-generated.png'">
+                <img src="https://i.ibb.co/WpyXNbPY/image.png" class="banner">
                 
                 <h1>FINAS IF PANEL</h1>
                 <p style="color: #00ff00; font-size: 12px;">● SYSTEM ACTIVE</p>
@@ -80,7 +80,7 @@ app.post('/attack', async (req, res) => {
             await new Promise(r => setTimeout(r, 1000));
         } catch (e) { console.log(e); }
     }
-    res.send('<h2>Sukses!</h2><a href="/" style="color:#bc13fe;">Kembali</a>');
+    res.send('<h2>Serangan Berhasil Dikirim!</h2><a href="/" style="color:#bc13fe;">Kembali</a>');
 });
 
 app.listen(port, '0.0.0.0', () => {
