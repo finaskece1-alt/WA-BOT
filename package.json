@@ -1,18 +1,19 @@
 {
-  "name": "panelbugwa",
+  "name": "wa-bug-panel",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "WA Bot Panel",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
-    "body-parser": "^2.2.2",
-    "express": "^5.2.1",
-    "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.34.6"
+    "whatsapp-web.js": "latest",
+    "qrcode-terminal": "latest",
+    "express": "latest",
+    "body-parser": "latest",
+    "puppeteer": "latest"
   }
 }
