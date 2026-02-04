@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
                 body { background: #050505; color: #fff; font-family: 'Arial', sans-serif; text-align: center; padding: 20px; }
                 .card { border: 2px solid #bc13fe; background: #000; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px #bc13fe; max-width: 400px; margin: auto; }
                 
-                /* LINK FOTO FINAS */
+                /* FOTO DARI LINK IBB LU */
                 .banner { 
                     width: 100%; 
                     border-radius: 15px; 
@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="card">
-                <img src="https://files.catbox.moe/o9v4p9.png" class="banner">
+                <img src="https://i.ibb.co.com/WpyXNbPY/image.png" class="banner" onerror="this.src='https://i.ibb.co/LhY0mC4/finas-generated.png'">
                 
                 <h1>FINAS IF PANEL</h1>
                 <p style="color: #00ff00; font-size: 12px;">● SYSTEM ACTIVE</p>
